@@ -1,0 +1,11 @@
+﻿.navbar-dark .navbar-nav .nav-link {
+    color:black;
+}
+.collapse navbar-collapse{
+    width:100%;
+    height:100%;
+}
+.navbar-nav ms-auto align-items-center {
+    width: 100%;
+    height: 100%;
+}

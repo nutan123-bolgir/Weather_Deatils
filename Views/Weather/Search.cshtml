@@ -1,0 +1,190 @@
+﻿@using Weather_Deatils.Models
+@model Weather_Deatils.Models.ResultViewModel
+@{
+    ViewData["Title"] = "Search";
+    ResultViewModel rslt = ViewBag.weatherData;
+    bool IsSearched = false;
+    if (ViewBag.IsSearched != null)
+    {
+        IsSearched = ViewBag.IsSearched;
+    }     
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<!-- Views/Weather/Search.cshtml -->
+
+
+@* <form asp-controller="Weather" asp-action="Search" method="post">
+    <input type="text" name="city" />
+    <button type="submit">Search</button>
+    </form> *@
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Weather App Project </title>
+	<link href="~/css/weather.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="~/js/weather.js"></script>
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css'>
+</head>
+
+<body>
+    <input type="hidden" id="hdn-userid" value="@ViewBag.userid"></input>
+    <h1>Weather Dashboard</h1>
+ 
+ </body>          
+       
+     <body>
+    <div class="container">
+    @if (IsSearched)
+    {
+        @if (rslt != null)
+        {  
+            <div class="weather-data">
+                <div class="current-weather">
+                    <div class="details">
+                        <h2>@rslt.City (@rslt.Country )</h2>
+                        <h6>Temperature: @rslt.Temp°C</h6>
+                        <h6>Wind:@rslt.wind M/S</h6>
+                        <h6>Humidity:@rslt.Humidity%</h6>
+                        @{
+                            var WFR = " http://openweathermap.org/img/w/" + (@rslt.WeatherIcon + ".png");
+                                <img src="@WFR" asp-append-version="true" />
+                        }
+                    </div>
+                </div>
+                @* <div class="days-forecast">
+                    <h2>5-Day Forecast</h2>
+                    <ul class="weather-cards">
+                        <li class="card">
+                            <h3>( ______ )</h3>
+                            <h6>Temp: __C</h6>
+                            <h6>Wind: __ M/S</h6>
+                            <h6>Humidity: __%</h6>
+                        </li>
+                        <li class="card">
+                            <h3>( ______ )</h3>
+                            <h6>Temp: __C</h6>
+                            <h6>Wind: __ M/S</h6>
+                            <h6>Humidity: __%</h6>
+                        </li>
+                        <li class="card">
+                            <h3>( ______ )</h3>
+                            <h6>Temp: __C</h6>
+                            <h6>Wind: __ M/S</h6>
+                            <h6>Humidity: __%</h6>
+                        </li>
+                        <li class="card">
+                            <h3>( ______ )</h3>
+                            <h6>Temp: __C</h6>
+                            <h6>Wind: __ M/S</h6>
+                            <h6>Humidity: __%</h6>
+                        </li>
+                        <li class="card">
+                            <h3>( ______ )</h3>
+                            <h6>Temp: __C</h6>
+                            <h6>Wind: __ M/S</h6>
+                            <h6>Humidity: __%</h6>
+                        </li>
+                    </ul>
+                </div> *@
+            </div>
+
+        }
+
+    }
+    else
+    {
+        <div class="weather-input">
+            <h3>Enter a City Name</h3>
+            <input class="city-input" id="city" type="text" placeholder="E.g., New York, London, Tokyo" name="city" autocomplete="on">
+            <button id="btnSearch" class="search-btn">Search</button>
+            <div class="separator"></div>
+            <button id="btnSaveFav" class="location-btn">SAVE AS FAV<i class='bi bi-bookmark-heart-fill'></i></button>
+        </div>
+    }
+    <div class="cls-weatherDtls" style="display:none">
+
+    </div>
+    </div>
+</body>
+</html>
+@* @if (rslt != null)
+{
+
+
+    <label name="city">@rslt.City</label>
+    <label name="city">@rslt.Country</label>
+    <label name="city">@rslt.Lat</label>
+    <label name="city">@rslt.Lon</label>
+    <label name="city">@rslt.Description</label>
+    <label name="city">@rslt.Humidity</label>
+    <label name="city">@rslt.Temp</label>
+    <label name="city">@rslt.TempMin</label>
+    <label name="city">@rslt.TempFeelsLike</label>
+}
+ *@
+
+
+<script>
+
+    $("#btnSaveFav").click(function () {
+        debugger;
+		//console.log("Button clicked");
+        var userid = $("#hdn-userid").val();
+        var city = $("#city").val();
+
+        if (userid != null && userid != undefined && city != null && city != undefined) {
+			$.ajax({
+                url: "@Url.Action("SaveCitySearch", "User")",
+				data: {
+                    userid: userid,
+                    cityName: city
+				},
+				type: "POST",
+				success: function (rsltval) {
+					
+                    if (rsltval == "Success" && rsltval != undefined) { 
+                        alert("Data save successfully add")
+                    }
+					
+				},
+				error: function () {
+					alert("Some error occ");
+				}
+			});
+		} else {
+			alert("City Not Found");
+		}
+	});
+    $("#btnSearch").click(function () {
+        var userid = $("#hdn-userid").val();
+        var city = $("#city").val();
+
+        if (userid != null && userid != undefined && city != null && city != undefined) {
+            $.ajax({
+                url: "@Url.Action("Search", "Weather")",
+                data: {
+                    userid: userid,
+                    city: city
+                },
+                type: "POST",
+                success: function (rsltval) {
+                    debugger;
+                    if (rsltval != null && rsltval != undefined) {
+                        $(".cls-weatherDtls").html(rsltval);
+                        $(".cls-weatherDtls").show();
+                    }
+                },
+                error: function () {
+                    alert("Some error occ");
+                }
+            });
+        } else {
+            alert("City Not Found");
+        }
+    });
+
+</script> 
+
+

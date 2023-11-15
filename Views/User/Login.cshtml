@@ -1,0 +1,155 @@
+﻿@model UserCity
+@{
+    ViewData["Title"] = "Login";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<html>
+ 	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="author" content="Yinka Enoch Adedokun">
+		<link href="~/css/login.css" rel="stylesheet" />
+    
+		<title>Login Page</title>
+	</head>
+ 	<body>
+		<!-- Main Content -->
+		<div class="container-fluid">
+			<div class="row main-content bg-success text-center">
+				<div class="col-md-4 text-center company__info">
+					<span class="company__logo"><h2><span class="fa fa-android"><img src="~/css/iconweather.png" style="width:150px; height: 150px;" /></span></h2></span>
+					<h4 class="company_title">SUCD</h4>
+				</div>
+				<div class="col-md-8 col-xs-12 col-sm-12 login_form ">
+					<div class="container-fluid">
+						<div class="row">
+							<h2>Log In</h2>
+						</div>
+						<div class="row">
+							<form class="form-group">
+								<div class="row">
+									<input type="text" name="UserName" id="UserName" class="form__input" placeholder="Username">
+								</div>
+								<div class="row">
+									
+									<input type="password" name="Password" id="Password" class="form__input" placeholder="Password">
+								</div>
+								<div class="row">
+									<input type="checkbox" name="remember_me" id="remember_me" class="">
+									<label for="remember_me">Remember Me!</label>
+								</div>
+								<div class="row" style="padding-left:90px">
+								<input type="submit" id="btnSubmit" value="Submit" class="btn" >
+									
+								</div>
+							</form>
+						</div>
+						<div class="row">
+							<p>Don't have an account? <a asp-action="Register" asp-controller="User">Register Here</a></p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		
+		
+   @*  <div class="form-group">
+        <label asp-for="UserName"></label>
+        <input asp-for="UserName" class="form-control" />
+        <span asp-validation-for="UserName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Password"></label>
+        <input asp-for="Password" type="password" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Login</button>  *@
+	</body>
+</html>
+
+
+ <script>
+
+	$("#btnSubmit").click(function () {
+		// console.log("Button clicked");
+		debugger;
+
+		var username = $("#UserName").val();
+		var password = $("#Password").val();
+		var restoken = "";//token(username, password);
+		
+		if (username != null && username != undefined && password != null && password != undefined) {
+			$.ajax({
+				url: "@Url.Action("GenerateToken", "User")",
+				data: {
+					UserName: username,
+					Password: password
+				},
+				contentType: 'application/json; charset=utf-8',
+				type: "GET",
+
+				success: function (genrateToken) {
+					debugger;
+					$.ajax({
+
+						url: "@Url.Action("Login1", "User")",
+						data: {
+							UserName: username,
+							Password: password
+						},
+						contentType: 'application/json; charset=utf-8',
+						type: "POST",
+						headers: {
+							Authorization: 'Bearer ' + genrateToken
+						},
+						success: function (rsltval) {
+							if (rsltval != null && rsltval != undefined) {
+
+							}
+						},
+						error: function () {
+							alert("Some error occ");
+						}
+					});
+				},
+				error: function () {
+					alert("Some error occ");
+				},
+				isAsync: false
+					
+			});
+			
+		} else {
+			alert("City Not Found");
+		}
+	});
+
+	function token(username, password) {
+		var trst = "";
+		$.ajax({
+			url: "@Url.Action("GenerateToken", "User")",
+			data: {
+				UserName: username,
+				Password: password
+			},
+			contentType: 'application/json; charset=utf-8',
+			type: "GET",
+
+			success: function (genrateToken) {
+				debugger;
+					trst =  genrateToken;
+			},
+			error: function () {
+				alert("Some error occ");
+			},
+			isAsync: false
+		});
+		return trst;
+	}
+</script> 
+
+
