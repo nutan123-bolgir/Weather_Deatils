@@ -23,7 +23,7 @@ namespace Weather_Deatils.Models
 
 
         }
-        public async Task<string> GenerateToken( String UserName, String Password)
+        public async Task<string> GenerateToken( String UserName)
         {
             var Key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.SecretKey));
             var signature = new SigningCredentials(Key, SecurityAlgorithms.HmacSha256);
@@ -31,7 +31,7 @@ namespace Weather_Deatils.Models
             var payload = new[]
             {
                 new Claim("username",UserName),
-                new Claim("Password",Password),
+                
             };
             var jwtToken = new JwtSecurityToken(
                 issuer: "localhost",

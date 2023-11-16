@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Http;
 using Weather_Deatils.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Weather_Deatils.Controllers
 {   
@@ -55,7 +56,7 @@ namespace Weather_Deatils.Controllers
         }
 
         [HttpPost]
-        //[Authorize]
+		[Authorize]
         public IActionResult Login1(UserCity user)
         {
             var existingUser = _context.UserCities.FirstOrDefault(u => u.UserName == user.UserName && u.Password == user.Password);
@@ -71,10 +72,7 @@ namespace Weather_Deatils.Controllers
             ModelState.AddModelError(string.Empty, "Invalid email or password");
             return View(user);
         }
-        //public IActionResult SaveCitySearch()
-        //{
-        //    return View();
-        //}
+        
         [Httpost]
         public IActionResult SaveCitySearch(string cityName, string userid)
         {
@@ -97,7 +95,7 @@ namespace Weather_Deatils.Controllers
         {
 
             Jwtcs _jwtcs = new Jwtcs(_config);
-		    var token = await _jwtcs.GenerateToken( UserName,Password).ConfigureAwait(false);
+		    var token = await _jwtcs.GenerateToken( UserName).ConfigureAwait(false);
             return Json(token);
         }
 
