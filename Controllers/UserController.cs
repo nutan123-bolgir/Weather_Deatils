@@ -55,19 +55,38 @@ namespace Weather_Deatils.Controllers
             return View();
         }
 
+        //[Authorize]
+        [HttpGet]
+        public IActionResult GetDashboard() {
+			return View(@"~/Views/Weather/Search.cshtml");
+
+		}
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult Test() {
+            return Json(new { login = "success"});
+        }
+
         [HttpPost]
-		[Authorize]
+		[AllowAnonymous]
         public IActionResult Login1(UserCity user)
         {
-            var existingUser = _context.UserCities.FirstOrDefault(u => u.UserName == user.UserName && u.Password == user.Password);
+            //var existingUser = _context.UserCities.FirstOrDefault(u => u.UserName == user.UserName && u.Password == user.Password);
+            var existingUser = new UserCity();
+            existingUser.UserName = "akshay";
+            existingUser.Password = "123";
+            existingUser.UserId = 1;
 
             if (existingUser != null)
             {
                
                 ViewBag.userid = existingUser.UserId;
+                var token = GenerateToken(existingUser.UserName);
+                return Json(new { jwt = token });
 
-				return View(@"~/Views/Weather/Search.cshtml");
-            }
+				//return RedirectToAction(@"~/Views/Weather/Search.cshtml");
+			}
 
             ModelState.AddModelError(string.Empty, "Invalid email or password");
             return View(user);
@@ -90,13 +109,13 @@ namespace Weather_Deatils.Controllers
             return Json("Success"); 
         }
 
-        [HttpGet("GenerateToken")]
-        public async Task<IActionResult> GenerateToken(string UserName , string Password)
+      
+        public string GenerateToken(string UserName)
         {
 
             Jwtcs _jwtcs = new Jwtcs(_config);
-		    var token = await _jwtcs.GenerateToken( UserName).ConfigureAwait(false);
-            return Json(token);
+            var token = _jwtcs.GenerateToken(UserName);
+            return token;
         }
 
 

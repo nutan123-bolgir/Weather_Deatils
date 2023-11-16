@@ -76,7 +76,7 @@
 
 	$("#btnSubmit").click(function () {
 		// console.log("Button clicked");
-		debugger;
+		//debugger;
 
 		var username = $("#UserName").val();
 		var password = $("#Password").val();
@@ -84,43 +84,49 @@
 		
 		if (username != null && username != undefined && password != null && password != undefined) {
 			$.ajax({
-				url: "@Url.Action("GenerateToken", "User")",
+
+				url: "@Url.Action("Login1", "User")",
 				data: {
 					UserName: username,
 					Password: password
 				},
 				contentType: 'application/json; charset=utf-8',
-				type: "GET",
-
-				success: function (genrateToken) {
-					debugger;
+				type: "POST",
+				//headers: {
+					//Authorization: 'Bearer ' + genrateToken
+				//},
+				success: function (rsltval) {
+					if (rsltval != null && rsltval != undefined) {
+						console.log(rsltval)
+					
+					}
+					alert(JSON.stringify(rsltval))
+					localStorage.setItem("jwt", rsltval.jwt);
+				},
+				failure: function (response) {
+					alert(response)
+				},
+				error: function (response) {
+					alert(response)
+				},
+				complete: function () {
 					$.ajax({
-
-						url: "@Url.Action("Login1", "User")",
-						data: {
-							UserName: username,
-							Password: password
-						},
-						contentType: 'application/json; charset=utf-8',
-						type: "POST",
+						url: "@Url.Action("GetDashboard", "User")",
+						type: "GET",
 						headers: {
-							Authorization: 'Bearer ' + genrateToken
+							Authorization: 'Bearer ' + localStorage.getItem("jwt")
 						},
-						success: function (rsltval) {
-							if (rsltval != null && rsltval != undefined) {
-
-							}
+						success: function (response) {
+							alert(response)
 						},
-						error: function () {
-							alert("Some error occ");
+						failure: function (response) {
+							alert(response)
+						},
+						error: function (response) {
+							alert(response)
 						}
 					});
 				},
-				error: function () {
-					alert("Some error occ");
-				},
-				isAsync: false
-					
 			});
 			
 		} else {
@@ -128,28 +134,7 @@
 		}
 	});
 
-	function token(username, password) {
-		var trst = "";
-		$.ajax({
-			url: "@Url.Action("GenerateToken", "User")",
-			data: {
-				UserName: username,
-				Password: password
-			},
-			contentType: 'application/json; charset=utf-8',
-			type: "GET",
 
-			success: function (genrateToken) {
-				debugger;
-					trst =  genrateToken;
-			},
-			error: function () {
-				alert("Some error occ");
-			},
-			isAsync: false
-		});
-		return trst;
-	}
 </script> 
 
 

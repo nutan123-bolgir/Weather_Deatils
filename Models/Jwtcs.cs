@@ -23,7 +23,7 @@ namespace Weather_Deatils.Models
 
 
         }
-        public async Task<string> GenerateToken( String UserName)
+        public string GenerateToken( String UserName)
         {
             var Key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.SecretKey));
             var signature = new SigningCredentials(Key, SecurityAlgorithms.HmacSha256);
