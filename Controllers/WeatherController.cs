@@ -8,21 +8,23 @@ using Weather_Deatils.Models;
 
 namespace Weather_Deatils.Controllers
 {
-   
     public class WeatherController : Controller
     {
+        private readonly WeatherDeatilsContext _cityContext;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly string _apiKey = "e925a4bd77f92d591f34b720ca5bf6e9";
 
-        public WeatherController(IHttpClientFactory httpClientFactory)
+        public WeatherController(IHttpClientFactory httpClientFactory, WeatherDeatilsContext cityContext)
         {
             _httpClientFactory = httpClientFactory;
+            _cityContext = cityContext;
         }
 
         // GET: /Weather/Search
-        public IActionResult Search()
+        public IActionResult Search(string userid)
         {
             ViewBag.IsSearched = false;
+           
             return View();
         }
 
@@ -65,7 +67,16 @@ namespace Weather_Deatils.Controllers
                         ViewBag.weatherData = rslt;
                     ViewBag.IsSearched = true;
                     // Pass weather data to the view
-
+                    _cityContext.Cities.Add(new City
+                    {
+                        CityName = rslt.City,
+                        //Temperature = int.Parse(rslt.Temp),
+                        Country = rslt.Country,
+                        UserId = int.Parse(userid),
+                        //Wind = int.Parse(rslt.wind),
+                        //Humidity = int.Parse(rslt.Humidity)
+                    });
+                    await _cityContext.SaveChangesAsync();
                     return View(rslt);
                 }
             }

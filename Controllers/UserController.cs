@@ -43,8 +43,7 @@ namespace Weather_Deatils.Controllers
                     // Log the exception or handle it appropriately
                     var errorMessage = ex.InnerException?.Message;
                     ModelState.AddModelError("", "An error occurred while saving the data. Please try again later.");
-                    // You can also add the specific error message to the ModelState if needed.
-                    // ModelState.AddModelError("", errorMessage);
+                   
                 }
             }
             return View(user);
@@ -55,10 +54,20 @@ namespace Weather_Deatils.Controllers
             return View();
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpGet]
         public IActionResult GetDashboard() {
-			return View(@"~/Views/Weather/Search.cshtml");
+			int userId = 0;
+			if (User.Identity.IsAuthenticated)
+			{
+				var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId");
+				if (userIdClaim != null)
+				{
+					userId = int.Parse(userIdClaim.Value);
+				}
+			}
+			ViewBag.UserId = userId;
+			return Json(new { result = "Redirect", url = "/Weather/Search?userId="+userId, userid=ViewBag.UserId});
 
 		}
 
@@ -70,33 +79,27 @@ namespace Weather_Deatils.Controllers
 
         [HttpPost]
 		[AllowAnonymous]
-        public IActionResult Login1(UserCity user)
+        public IActionResult Login1([FromBody] UserCity user)
         {
-            //var existingUser = _context.UserCities.FirstOrDefault(u => u.UserName == user.UserName && u.Password == user.Password);
-            var existingUser = new UserCity();
-            existingUser.UserName = "akshay";
-            existingUser.Password = "123";
-            existingUser.UserId = 1;
-
+            var existingUser = _context.UserCities.FirstOrDefault(u => u.UserName == user.UserName && u.Password == user.Password);
             if (existingUser != null)
             {
-               
                 ViewBag.userid = existingUser.UserId;
-                var token = GenerateToken(existingUser.UserName);
-                return Json(new { jwt = token });
+                var token = GenerateToken(existingUser.UserName,existingUser.UserId);
+				return Json(new { result = "Success", jwt = token, userid = existingUser.UserId });
 
-				//return RedirectToAction(@"~/Views/Weather/Search.cshtml");
 			}
 
             ModelState.AddModelError(string.Empty, "Invalid email or password");
             return View(user);
         }
-        
+      
         [Httpost]
-        public IActionResult SaveCitySearch(string cityName, string userid)
+        public IActionResult SaveCitySearch(string cityName,  string userid)
         {
             if (!string.IsNullOrEmpty(cityName))
             {
+                
                 var existingUser = _context.UserCities.FirstOrDefault(u => u.UserId == Convert.ToInt32(userid));
                 City objCity = new City();
                 objCity.CityName = cityName;    
@@ -108,13 +111,26 @@ namespace Weather_Deatils.Controllers
 
             return Json("Success"); 
         }
+        [HttpGet]
+        public IActionResult FavoriteCities(string userid)
+        {
+            var favoriteCities = _context.UserCities.Where(u => u.UserId == Convert.ToInt32(userid)).Select(u => u.Cities).ToList();
 
-      
-        public string GenerateToken(string UserName)
+            // If no favorite cities found for the user, return an empty list
+            if (!favoriteCities.Any())
+            {
+                return Json(new List<City>());
+            }
+
+            // Return the list of favorite cities as JSON
+            return View(favoriteCities.SelectMany(c => c));
+        }
+       
+        public string GenerateToken(string UserName, int UserId)
         {
 
             Jwtcs _jwtcs = new Jwtcs(_config);
-            var token = _jwtcs.GenerateToken(UserName);
+            var token = _jwtcs.GenerateToken(UserName,UserId);
             return token;
         }
 

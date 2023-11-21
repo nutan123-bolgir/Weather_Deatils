@@ -22,19 +22,24 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 {
 	x.TokenValidationParameters = new TokenValidationParameters
 	{
-		ValidateIssuer = true,
-		ValidateAudience = true,
-		ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-		ValidIssuer = "https://localhost:44357/",
-		ValidAudience = "https://localhost:44357/",
-		IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtConfig:Key"])),
-		ClockSkew = TimeSpan.Zero
+		ValidateIssuer = false,
+		ValidateAudience = false,
+		ValidateLifetime = false,
+        ValidateIssuerSigningKey = false,
+		ValidIssuer = "localhost",
+		ValidAudience = "localhost",
+		IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Yh2k7QSu4l8CZg5p6X3Pna9L0Miy4D3Bvt0JVr87UcOj69Kqw5R2Nmf4FWs03Hdx")),
+	
 	};
 });
-builder.Services.AddSession();
+builder.Services.AddSession(options =>
+{
+	options.IdleTimeout = TimeSpan.FromMinutes(30);
+	options.Cookie.HttpOnly = true;
+	options.Cookie.IsEssential = true;
+});
 
-var app = builder.Build();
+    var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -49,11 +54,11 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();
-
+app.UseSession();
 
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=User}/{action=Login}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

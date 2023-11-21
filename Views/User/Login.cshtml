@@ -42,7 +42,7 @@
 									<label for="remember_me">Remember Me!</label>
 								</div>
 								<div class="row" style="padding-left:90px">
-								<input type="submit" id="btnSubmit" value="Submit" class="btn" >
+								<input type="button" id="btnSubmit" value="Submit" class="btn" >
 									
 								</div>
 							</form>
@@ -73,7 +73,6 @@
 
 
  <script>
-
 	$("#btnSubmit").click(function () {
 		// console.log("Button clicked");
 		//debugger;
@@ -81,54 +80,51 @@
 		var username = $("#UserName").val();
 		var password = $("#Password").val();
 		var restoken = "";//token(username, password);
-		
-		if (username != null && username != undefined && password != null && password != undefined) {
-			$.ajax({
+		jsonData = {
+			UserName: username,
+			Password: password
+		}
 
-				url: "@Url.Action("Login1", "User")",
-				data: {
-					UserName: username,
-					Password: password
+		if (username != null && username != undefined && password != null && password != undefined) {
+			fetch("@Url.Action("Login1", "User")", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
 				},
-				contentType: 'application/json; charset=utf-8',
-				type: "POST",
-				//headers: {
-					//Authorization: 'Bearer ' + genrateToken
-				//},
-				success: function (rsltval) {
-					if (rsltval != null && rsltval != undefined) {
-						console.log(rsltval)
-					
-					}
-					alert(JSON.stringify(rsltval))
-					localStorage.setItem("jwt", rsltval.jwt);
-				},
-				failure: function (response) {
-					alert(response)
-				},
-				error: function (response) {
-					alert(response)
-				},
-				complete: function () {
-					$.ajax({
-						url: "@Url.Action("GetDashboard", "User")",
-						type: "GET",
+				body: JSON.stringify(jsonData)
+			})
+				.then(response => response.json())
+				.then(data => {
+					console.log(data);
+					// alert("jwt token genrate");
+					localStorage.setItem("jwt", data.jwt);
+
+					fetch("@Url.Action("GetDashboard", "User")", {
+						method: "GET",
 						headers: {
-							Authorization: 'Bearer ' + localStorage.getItem("jwt")
-						},
-						success: function (response) {
-							alert(response)
-						},
-						failure: function (response) {
-							alert(response)
-						},
-						error: function (response) {
-							alert(response)
+							"Content-Type": "application/json",
+							"Authorization": 'Bearer ' + localStorage.getItem("jwt")
 						}
-					});
-				},
-			});
-			
+					})
+						.then(response => response.json())
+						.then(data => {
+							console.log(data);
+							alert("login success");
+							if (data.result == 'Redirect'){
+								var userId = data.UserId;
+								window.location = data.url;
+							}
+						})
+						.catch(error => {
+							console.error("Error:", error);
+							alert(error);
+						});
+				})
+				.catch(error => {
+					console.error("Error:", error);
+					alert(error);
+				});
+
 		} else {
 			alert("City Not Found");
 		}

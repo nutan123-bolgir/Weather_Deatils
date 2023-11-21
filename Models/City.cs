@@ -13,5 +13,13 @@ public partial class City
 
     public int? UserId { get; set; }
 
+    public double? Temperature { get; set; }
+
+    public double? Wind { get; set; }
+
+    public double? Humidity { get; set; }
+
+    public bool? Isactive { get; set; }
+
     public virtual UserCity? User { get; set; }
 }

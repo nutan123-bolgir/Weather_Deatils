@@ -1,6 +1,7 @@
 ﻿@model UserCity;
 @{
     ViewData["Title"] = "Register";
+	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <head>
 	<link href="~/css/register.css" rel="stylesheet" />
@@ -30,8 +31,8 @@
 							<div class="row">
 								<input type="password" name="password" id="password" class="form__input" placeholder="Password" value="@Model.Password ">
 							</div>
-							<div class="row">
-								<input type="submit" value="Submit" class="btn">
+							<div class="row" style="padding-left:90px">
+								<input type="submit" value="Submit" class="btn" >
 							</div>
 						</form>
 					</div>

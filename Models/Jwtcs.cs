@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Nancy.Json;
+using NuGet.Common;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -23,7 +24,7 @@ namespace Weather_Deatils.Models
 
 
         }
-        public string GenerateToken( String UserName)
+        public string GenerateToken( String UserName, int userId)
         {
             var Key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.SecretKey));
             var signature = new SigningCredentials(Key, SecurityAlgorithms.HmacSha256);
@@ -31,19 +32,18 @@ namespace Weather_Deatils.Models
             var payload = new[]
             {
                 new Claim("username",UserName),
-                
-            };
+				new Claim("UserId", userId.ToString())
+			};
             var jwtToken = new JwtSecurityToken(
                 issuer: "localhost",
                 audience: "localhost",
                 claims: payload,
                 expires: DateTime.Now.AddMinutes(TokenDuration),
                 signingCredentials: signature
-
-
               );
-            return jwtToken.EncodedPayload;
+			var jwt = new JwtSecurityTokenHandler().WriteToken(jwtToken);
 
+			return jwt;
         }
     }
 }

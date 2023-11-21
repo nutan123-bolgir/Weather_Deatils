@@ -1,0 +1,42 @@
+﻿@model IEnumerable<Weather_Deatils.Models.City>
+
+@{
+    ViewData["Title"] = "FavoriteCities";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var userId = ViewContext.HttpContext.Request.Query["userId"];
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<h1>Search History</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CityName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Country)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CityName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Country)
+            <td>
+                <a asp-action="Details" asp-route-id="@item.CityId">Details</a> |
+                <input type="hidden" id="hdn-userid" value="@userId"></input>
+                 <button id="btnSearch" class="search-btn">Delete</button>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+   
