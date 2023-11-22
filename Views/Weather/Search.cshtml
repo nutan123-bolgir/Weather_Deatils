@@ -35,12 +35,9 @@
 <body>
     
     <input type="hidden" id="hdn-userid" value="@userId"></input>
-    <h1>Weather Dashboard</h1>
 
- 
- </body>          
-       
-     <body>
+
+
     <div class="container">
     @if (IsSearched)
     {
@@ -59,7 +56,7 @@
                         }
                     </div>
                 </div>
-                @* <div class="days-forecast">
+                <div class="days-forecast">
                     <h2>5-Day Forecast</h2>
                     <ul class="weather-cards">
                         <li class="card">
@@ -93,47 +90,32 @@
                             <h6>Humidity: __%</h6>
                         </li>
                     </ul>
-                </div> *@
-            </div>
+                </div>
+                </div>
+                
 
         }
 
     }
+                   
     else
-    {
-        <div class="weather-input">
-            <h3>Enter a City Name</h3>
-            <input class="city-input" id="city" type="text" placeholder="E.g., New York, London, Tokyo" name="city" autocomplete="on">
-            <button id="btnSearch" class="search-btn">Search</button>
-            <div class="separator"></div>
-            <button id="btnSaveFav" class="location-btn">SAVE AS FAV<i class='bi bi-bookmark-heart-fill'></i></button>
-                <a class="button" asp-action="FavoriteCities" asp-controller="User" asp-route-userId="@userId">LIST OF FAV CITY</a>
-                <button id="btnlogout" class="btn btn-success">Logout</button>
-        </div>
-    }
+        {
+                     
+            <div class="weather-input">
+                <h3>Enter a City Name</h3>
+                <input class="city-input" id="city" type="text" placeholder="E.g., New York, London, Tokyo" name="city" autocomplete="on">
+                <button id="btnSearch" class="search-btn">Search</button>
+                <a class="button" asp-action="FavoriteCities" asp-controller="User" asp-route-userId="@userId">Recent Search</a>
+                <div class="separator"></div>
+                <button id="btnSaveFav" class="location-btn">SAVE AS FAV<i class='bi bi-bookmark-heart-fill'></i></button>
+                
+                <button id="btnlogout" class="btn btn-success" style="margin-top:25px;">Logout</button>
+            </div>
+        }
     <div class="cls-weatherDtls" style="display:none">
 
     </div>
     </div>
-</body>
-</html>
-@* @if (rslt != null)
-{
-
-
-    <label name="city">@rslt.City</label>
-    <label name="city">@rslt.Country</label>
-    <label name="city">@rslt.Lat</label>
-    <label name="city">@rslt.Lon</label>
-    <label name="city">@rslt.Description</label>
-    <label name="city">@rslt.Humidity</label>
-    <label name="city">@rslt.Temp</label>
-    <label name="city">@rslt.TempMin</label>
-    <label name="city">@rslt.TempFeelsLike</label>
-}
- *@
-
-
 <script>
   
     $("#btnSaveFav").click(function () {
@@ -179,7 +161,7 @@
                 },
                 type: "POST",
                 success: function (rsltval) {
-                   
+                        $(".cls-weatherDtls").empty();
                     if (rsltval != null && rsltval != undefined) {
                         $(".cls-weatherDtls").html(rsltval);
                         $(".cls-weatherDtls").show();
@@ -199,4 +181,5 @@
     })
 </script> 
 
-
+</body>
+</html>

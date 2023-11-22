@@ -9,7 +9,8 @@
 }
 
 body {
-    background: #E3F2FD;
+    background: url('weatherdash.jpg'); 
+    background-size: cover;
 }
 
 h1 {
@@ -43,7 +44,7 @@ h1 {
 
         .weather-input input:focus {
             padding: 0 16px;
-            border: 2px solid #5372F0;
+            border: 2px solid #07052e;
         }
 
     .weather-input .separator {
@@ -74,12 +75,12 @@ h1 {
         border-radius: 4px;
         font-size: 1rem;
         color: #fff;
-        background: #5372F0;
+        background: #07052e;
         transition: 0.2s ease;
     }
 
     .weather-input .search-btn:hover {
-        background: #2c52ed;
+        background: #07052e;
     }
 
     .weather-input .location-btn {
@@ -96,7 +97,7 @@ h1 {
 
     .weather-data .current-weather {
         color: #fff;
-        background: #5372F0;
+        background: #07052e;
         border-radius: 5px;
         padding: 20px 70px 20px 20px;
         display: flex;

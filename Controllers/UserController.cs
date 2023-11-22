@@ -114,18 +114,34 @@ namespace Weather_Deatils.Controllers
         [HttpGet]
         public IActionResult FavoriteCities(string userid)
         {
-            var favoriteCities = _context.UserCities.Where(u => u.UserId == Convert.ToInt32(userid)).Select(u => u.Cities).ToList();
+            var favoriteCities = _context.UserCities.Where(u => u.UserId == Convert.ToInt32(userid)).Select(u => u.Cities).SelectMany(c => c).Where(c => c.Isactive==true).ToList();
 
-            // If no favorite cities found for the user, return an empty list
+            //If no favorite cities found for the user, return an empty list
             if (!favoriteCities.Any())
             {
                 return Json(new List<City>());
             }
 
-            // Return the list of favorite cities as JSON
-            return View(favoriteCities.SelectMany(c => c));
-        }
+            //Return the list of favorite cities as JSON
+            return View(favoriteCities);
        
+    }
+        [HttpPost]
+        public async Task<IActionResult> DeleteCity(int cityId, string userId)
+        {
+            var City = await _context.Cities.FirstOrDefaultAsync(uc => uc.CityId == cityId && uc.UserId == Convert.ToInt32(userId));
+            if (City == null)
+            {
+                return NotFound();
+            }
+
+            City.Isactive =false;
+            _context.Cities.Update(City);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(FavoriteCities), new { userid = userId });
+        }
+
         public string GenerateToken(string UserName, int UserId)
         {
 

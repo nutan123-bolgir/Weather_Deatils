@@ -65,16 +65,17 @@ namespace Weather_Deatils.Controllers
                         //jsonstring = new JavaScriptSerializer().Serialize(rslt);
 
                         ViewBag.weatherData = rslt;
-                    ViewBag.IsSearched = true;
+                         ViewBag.IsSearched = true;
                     // Pass weather data to the view
                     _cityContext.Cities.Add(new City
                     {
                         CityName = rslt.City,
-                        //Temperature = int.Parse(rslt.Temp),
+                        Temperature = double.TryParse(rslt.Temp, out var TempValue) ? TempValue: (double?)null,
                         Country = rslt.Country,
                         UserId = int.Parse(userid),
-                        //Wind = int.Parse(rslt.wind),
-                        //Humidity = int.Parse(rslt.Humidity)
+                        Wind = double.TryParse(rslt.wind, out var windValue) ? windValue : (double?)null,
+                        Humidity = double.TryParse(rslt.Humidity, out var humidityValue) ? humidityValue : (double?)null,
+                         Isactive=true
                     });
                     await _cityContext.SaveChangesAsync();
                     return View(rslt);
