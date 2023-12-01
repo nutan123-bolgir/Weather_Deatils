@@ -14,4 +14,6 @@ public partial class UserCity
     public string? Password { get; set; }
 
     public virtual ICollection<City> Cities { get; set; } = new List<City>();
+
+    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 }

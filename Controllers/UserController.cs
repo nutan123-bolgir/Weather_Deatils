@@ -56,20 +56,26 @@ namespace Weather_Deatils.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult GetDashboard() {
-			int userId = 0;
-			if (User.Identity.IsAuthenticated)
-			{
-				var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId");
-				if (userIdClaim != null)
-				{
-					userId = int.Parse(userIdClaim.Value);
-				}
-			}
-			ViewBag.UserId = userId;
-			return Json(new { result = "Redirect", url = "/Weather/Search?userId="+userId, userid=ViewBag.UserId});
-
-		}
+        public IActionResult GetDashboard()
+        {
+            int userId = 0;
+            string username = string.Empty;
+            if (User.Identity.IsAuthenticated)
+            {
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId");
+                var usernameClaim = User.Claims.FirstOrDefault(c => c.Type == "username");
+                if (usernameClaim != null)
+                {
+                    username = usernameClaim.Value;
+                }
+                if (userIdClaim != null)
+                {
+                    userId = int.Parse(userIdClaim.Value);
+                }
+            }
+            ViewBag.UserId = userId;
+            return Json(new { result = "Redirect", url = "/Weather/Search?userId=" + userId + "&username=" + username, userid = ViewBag.UserId });
+        }
 
         [Authorize]
         [HttpGet]
@@ -86,7 +92,7 @@ namespace Weather_Deatils.Controllers
             {
                 ViewBag.userid = existingUser.UserId;
                 var token = GenerateToken(existingUser.UserName,existingUser.UserId);
-				return Json(new { result = "Success", jwt = token, userid = existingUser.UserId });
+				return Json(new { result = "Success", jwt = token, userid = existingUser.UserId  });
 
 			}
 
@@ -101,15 +107,43 @@ namespace Weather_Deatils.Controllers
             {
                 
                 var existingUser = _context.UserCities.FirstOrDefault(u => u.UserId == Convert.ToInt32(userid));
-                City objCity = new City();
-                objCity.CityName = cityName;    
+                Order objCity = new Order();
+                objCity.Cityname = cityName;    
                 objCity.UserId = Convert.ToInt32(userid);
-                existingUser.Cities.Add(objCity);
+                existingUser.Orders.Add(objCity);
                 _context.UserCities.Update(existingUser);
                 _context.SaveChanges();
             }
 
             return Json("Success"); 
+        }
+        [HttpGet]
+        public IActionResult SavedCities(string userid)
+        {
+            var favoriteCities = _context.UserCities.Where(u => u.UserId == Convert.ToInt32(userid)).Select(u => u.Orders).SelectMany(c => c).ToList();
+
+            //If no favorite cities found for the user, return an empty list
+            if (!favoriteCities.Any())
+            {
+                return Json(new List<Order>());
+            }
+
+            //Return the list of favorite cities as JSON
+            return View(favoriteCities);
+
+        }
+        [HttpPost]
+        public async Task<IActionResult> SavDeleteCity(int cityId, string userId)
+        {
+            var City = await _context.Orders.FirstOrDefaultAsync(uc => uc.CityId == cityId && uc.UserId == Convert.ToInt32(userId));
+            if (City == null)
+            {
+                return NotFound();
+            }
+            _context.Orders.Remove(City);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(SavedCities), new { userid = userId });
         }
         [HttpGet]
         public IActionResult FavoriteCities(string userid)

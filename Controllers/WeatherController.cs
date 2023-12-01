@@ -65,7 +65,7 @@ namespace Weather_Deatils.Controllers
                         //jsonstring = new JavaScriptSerializer().Serialize(rslt);
 
                         ViewBag.weatherData = rslt;
-                         ViewBag.IsSearched = true;
+                        ViewBag.IsSearched = true;
                     // Pass weather data to the view
                     _cityContext.Cities.Add(new City
                     {

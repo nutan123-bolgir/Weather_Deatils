@@ -1,32 +1,22 @@
-﻿@model IEnumerable<Weather_Deatils.Models.City>
+﻿@model IEnumerable<Weather_Deatils.Models.Order>
 
 @{
-    ViewData["Title"] = "FavoriteCities";
+    ViewData["Title"] = "SavedCities";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var userId = ViewContext.HttpContext.Request.Query["userId"];
 }
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<h1>
-    Search History </h1>
 
+<h1>SavedCities</h1>
 
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.CityName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Country)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Temperature)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Wind)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Humidity)
+                @Html.DisplayNameFor(model => model.Cityname)
             </th>
             <th></th>
         </tr>
@@ -35,37 +25,23 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.CityName)
+                @Html.DisplayFor(modelItem => item.Cityname)
             </td>
+           
             <td>
-                @Html.DisplayFor(modelItem => item.Country)
-            </td>
-            <td>
-                 @Html.DisplayFor(modelItem => item.Temperature)
-            </td>
-             <td>
-                 @Html.DisplayFor(modelItem => item.Wind )
-             </td>
-              <td>
-                  @Html.DisplayFor(modelItem => item.Humidity)
-              </td>
-            <td>
-                    <form id="deleteCityForm" asp-action="DeleteCity" asp-controller="User" method="post">
+
+                    <form asp-action="SavDeleteCity" asp-controller="User" method="post">
                         <input type="hidden" name="CityId" value="@item.CityId" />
                         <input type="hidden" name="userId" value="@userId" />
-                        <button type="button" class="btn btn-primary" onclick="confirmDelete()">
+                        <button type="submit" class="btn btn-primary" onclick="confirmDelete()">
                             Remove
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                                 <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
                                 <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
                             </svg>
                         </button>
-                    </form>                    
-
-
-
-
-            </td> 
+                    </form>
+            </td>
         </tr>
 }
     </tbody>
@@ -82,4 +58,3 @@
     }
 </script>
 
-   

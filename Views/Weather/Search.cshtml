@@ -1,16 +1,19 @@
 ﻿@using System.Web
 @using Weather_Deatils.Models
 @using Weather_Deatils.Controllers
+@using Microsoft.AspNetCore.Identity
 @model Weather_Deatils.Models.ResultViewModel
 @{
     ViewData["Title"] = "Search";
     ResultViewModel rslt = ViewBag.weatherData;
     var userId = ViewContext.HttpContext.Request.Query["userId"];
+    string username = ViewContext.HttpContext.Request.Query["username"];
     bool IsSearched = false;
     if (ViewBag.IsSearched != null)
     {
         IsSearched = ViewBag.IsSearched;
-    }     
+    }
+   
 }
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <!-- Views/Weather/Search.cshtml -->
@@ -53,7 +56,7 @@
                         <h6>Humidity:@rslt.Humidity%</h6>
                         @{
                             var WFR = " http://openweathermap.org/img/w/" + (@rslt.WeatherIcon + ".png");
-                                    <img src="@WFR" asp-append-version="true" />
+                                        <img src="@WFR" asp-append-version="true" />
                         }
                     </div>
                 </div>
@@ -94,22 +97,23 @@
                 </div>
                 </div>
                 
-
+ 
         }
 
-    }
+   }
                    
     else
         {
                      
             <div class="weather-input">
+                <h3>Welcome,@username !</h3>
                 <h3>Enter a City Name</h3>
                 <input class="city-input" id="city" type="text" placeholder="E.g., New York, London, Tokyo" name="city" autocomplete="on">
                 <button id="btnSearch" class="search-btn">Search</button>
                 <a class="button" asp-action="FavoriteCities" asp-controller="User" asp-route-userId="@userId">Recent Search</a>
                 <div class="separator"></div>
                 <button id="btnSaveFav" class="location-btn">SAVE AS FAV<i class='bi bi-bookmark-heart-fill'></i></button>
-                
+                <a class="button" asp-action="SavedCities" asp-controller="User" asp-route-userId="@userId">List of Fav city</a>
                 <button id="btnlogout" class="btn btn-success" style="margin-top:25px;">Logout</button>
             </div>
         }
@@ -176,10 +180,19 @@
             alert("City Not Found");
         }
     });
-    $("#btnlogout").click(function () {
-        localStorage.removeItem('jwt');
-        window.location.href = '/Home/Index';
-    })
+        $("#btnlogout").click(function () {
+            
+            var logoutConfirmed = confirm("Are you sure you want to logout?");
+
+            if (logoutConfirmed) {
+                localStorage.removeItem('jwt');
+                window.location.href = '/Home/Index';
+            }
+            else {
+                
+            }
+        });
+
 </script> 
 
 </body>
